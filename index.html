@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>jQuery Get Values of Selected Checboxes</title>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var favorite = [];
+        var kk = "";
+        var socket = new WebSocket("ws://localhost:8080/WebApplication1/test");
+        socket.onmessage = function(event) {
+            
+            var obj = JSON.parse(event.data);
+            var kk = "";
+            for(var index in obj) { 
+            if(index == "Microsoft"){
+                kk += "<li>"+index+": "+obj.Microsoft+"</li>";
+            }
+            if(index == "Google"){
+                kk += "<li>"+index+": "+obj.Google+"</li>" 
+            }
+            if(index == "INTEL"){
+                kk += "<li>"+index+": "+obj.intel+"</li>"
+            }
+            
+        }
+            //alert();
+      var mySpan = document.getElementById("data");
+      var MyList = document.getElementById('results');
+      MyList.innerHTML = kk;
+      mySpan.innerHTML=event.data; 
+    };
+     
+    socket.onerror = function(event){
+        console.log("Error ", event)
+    }  
+        $("button").click(function(){
+            
+            $.each($("input[name='stock']:checked"), function(){
+                favorite.push($(this).val());
+            });
+            socket.send(favorite);
+        });
+    });
+</script>
+</head>
+<body>
+    <form>
+        <h3 id ="data">your result here</h3>
+        
+        <label><input type="checkbox" value="Microsoft" name="stock"> Microsoft</label><br>
+        <label><input type="checkbox" value="Google" name="stock"> Google</label><br>
+        <label><input type="checkbox" value="IBM" name="stock"> IBM</label><br>
+        <label><input type="checkbox" value="INTEL" name="stock"> INTEL</label><br>
+        <label><input type="checkbox" value="APPLE" name="stock"> APPLE</label><br>
+        <label><input type="checkbox" value="ORACLE" name="stock"> ORACLE</label><br>
+        <br>
+        <button type="button">Subscribe</button><br>
+        <ul id="results"></ul>
+    </form>
+</body>
+</html>
